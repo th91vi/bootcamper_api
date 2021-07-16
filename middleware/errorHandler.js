@@ -1,37 +1,35 @@
 const ErrorResponse = require("../utils/errorResponse");
 
-const errorhandler = (error, req, res, next) => {
-  let message;
-  let err = { ...error };
-  err.message = error.message;
+const errorHandler = (err, req, res, next) => {
+  let error = { ...err };
 
-  console.log(error.stack.red);
+  error.message = err.message;
 
-  switch (err) {
-    // Mongoose bad Object Id
-    case err.name === "CastError":
-      message = `Resource not found with id of ${req.params.id}`;
-      err = new ErrorResponse(message, 404);
-      break;
+  // Log to console for dev
+  console.log(err.stack.red);
 
-    // Mongoose duplicate key
-    case err.code === 11000:
-      message = "Duplicate field value entered";
-      err = new ErrorResponse(message, 400);
-      break;
-
-    // Mongoose validation error
-    case err.name === "ValidationError":
-      message = Object.values(err.errors).map((error) => error.message);
-      err = new ErrorResponse(message, 400);
-      break;
-
-    default:
-      res.status(err.statusCode || 500).json({
-        success: false,
-        error: err.message || "Server error",
-      });
+  // Mongoose bad ObjectId
+  if (err.name === "CastError") {
+    const message = `Resource not found`;
+    error = new ErrorResponse(message, 404);
   }
+
+  // Mongoose duplicate key
+  if (err.code === 11000) {
+    const message = "Duplicate field value entered";
+    error = new ErrorResponse(message, 400);
+  }
+
+  // Mongoose validation error
+  if (err.name === "ValidationError") {
+    const message = Object.values(err.errors).map((val) => val.message);
+    error = new ErrorResponse(message, 400);
+  }
+
+  res.status(error.statusCode || 500).json({
+    success: false,
+    error: error.message || "Server Error",
+  });
 };
 
-module.exports = errorhandler;
+module.exports = errorHandler;
