@@ -41,7 +41,7 @@ const deleteData = async () => {
   try {
     await Bootcamp.deleteMany();
 
-    console.log("All data destroyed successfully".red.inverse);
+    console.log("All data destroyed successfully".green.inverse);
     process.exit();
   } catch (error) {
     console.error(error);
