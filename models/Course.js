@@ -60,8 +60,6 @@ CourseSchema.statics.getAverageCost = async function (bootcampId) {
   } catch (error) {
     console.log(error);
   }
-
-  console.log(obj);
 };
 
 // Call getAverageCost after save
