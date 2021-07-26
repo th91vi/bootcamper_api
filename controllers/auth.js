@@ -14,16 +14,6 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
   });
 
   sendTokenResponse(user, 200, res);
-
-  res.status(200).json({
-    succes: true,
-    data: {
-      name,
-      email,
-      role,
-      token,
-    },
-  });
 });
 
 exports.loginUser = asyncHandler(async (req, res, next) => {
@@ -51,12 +41,14 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
   }
 
   sendTokenResponse(user, 200, res);
+});
+
+exports.getLoggedUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
 
   res.status(200).json({
-    succes: true,
-    data: {
-      token,
-    },
+    sucess: true,
+    data: user,
   });
 });
 
