@@ -73,3 +73,25 @@ const sendTokenResponse = (user, statusCode, res) => {
     token,
   });
 };
+
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(
+      new ErrorResponse(`${req.body.email} is not associated to any user`, 404)
+    );
+  }
+
+  // Get reset token
+  const resetToken = user.getResetPasswordToken();
+
+  await user.save({
+    validateBeforeSave: false,
+  });
+
+  res.status(200).json({
+    sucess: true,
+    data: user,
+  });
+});
