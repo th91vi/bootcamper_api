@@ -4,6 +4,7 @@ const {
   loginUser,
   getLoggedUser,
   forgotPassword,
+  resetPassword,
 } = require("../controllers/auth");
 
 const router = express.Router();
@@ -17,5 +18,7 @@ router.route("/login").post(loginUser);
 router.route("/me").get(protect, getLoggedUser);
 
 router.route("/forgotpassword").post(forgotPassword);
+
+router.route("/resetPassword/:resettoken").put(resetPassword);
 
 module.exports = router;
