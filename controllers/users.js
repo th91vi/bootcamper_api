@@ -25,6 +25,13 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateUser = asyncHandler(async (req, res, next) => {
+  // Prevent admin from changing user password
+  if ("password" in req.body) {
+    return next(
+      new ErrorResponse("Admins are not allowed to change user passwords", 403)
+    );
+  }
+
   const user = await User.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -41,6 +48,6 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: `${user.name} deleted successfully`,
+    message: `${user.name} (${user.email}) deleted successfully`,
   });
 });
