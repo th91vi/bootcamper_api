@@ -3,6 +3,8 @@ const {
   getReviews,
   getSingleReview,
   createReview,
+  updateReview,
+  deleteReview,
 } = require("../controllers/reviews");
 
 const Review = require("../models/Review");
@@ -19,9 +21,14 @@ router
       path: "bootcamp",
       select: "name text",
     }),
-    getReviews
+    getReviews,
   )
   .post(protect, authorizeRoles("user", "admin"), createReview);
-router.route("/:id").get(getSingleReview);
+
+router
+  .route("/:id")
+  .get(getSingleReview)
+  .put(protect, authorizeRoles("user", "admin"), updateReview)
+  .delete(protect, authorizeRoles("user", "admin"), deleteReview);
 
 module.exports = router;
