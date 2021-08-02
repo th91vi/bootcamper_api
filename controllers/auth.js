@@ -54,6 +54,18 @@ exports.getLoggedUser = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.logoutUser = asyncHandler(async (req, res, next) => {
+  res.cookie("token", "none", {
+    expires: new Date(Date.now() + 5 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    sucess: true,
+    data: {},
+  });
+});
+
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
@@ -61,7 +73,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 
   const options = {
     expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
   };
@@ -81,7 +93,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   if (!user) {
     return next(
-      new ErrorResponse(`${req.body.email} is not associated to any user`, 404)
+      new ErrorResponse(`${req.body.email} is not associated to any user`, 404),
     );
   }
 
@@ -94,7 +106,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   // Create reset url
   const resetUrl = `${req.protocol}://${req.get(
-    "host"
+    "host",
   )}/api/v1/auth/resetpassword/${resetToken}`;
 
   const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
